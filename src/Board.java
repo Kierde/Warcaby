@@ -1,8 +1,4 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-
-import javafx.print.PrintQuality;
-import javafx.scene.text.FontPosture;
 
 public class Board {
 
@@ -113,20 +109,28 @@ public class Board {
     }
 
     public boolean isMovingOwnFigure(Figures figure, Player.Side side) {
-
-        if (side == Player.Side.WHITE && figure != Figures.WHITE && figure != Figures.WHITE_KING)
+        //w makeMove należy przed wywołaniem sprawdzić czy nie jest empty 
+        if(figure==Figures.EMPTY)
+            return true;    
+        if (side == Player.Side.WHITE && figure != Figures.WHITE && figure != Figures.WHITE_KING) 
             return false;
         if (side == Player.Side.BLACK && figure != Figures.BLACK && figure != Figures.BLACK_KING)
-            return false;
+            return false; 
         return true;
     }
 
     public void testBoard() {
 
         board = new Figures[8][8];
-        board[5][4] = Figures.WHITE;
-        board[4][3] = Figures.BLACK;
-        board[4][5] = Figures.BLACK;
+        board[0][4]=Figures.BLACK_KING;
+        board[1][3] =Figures.WHITE;
+        board[1][5] =Figures.WHITE;
+      
+
+
+
+
+
         fillEmptyOnBoard();
     }
 
@@ -227,8 +231,26 @@ public class Board {
         return normalProperMoves;
     }
 
+
+    
+    public ArrayList<Move> getAllTakeMoves(Player.Side side){
+
+        ArrayList<Move> allTakeMoves = new ArrayList<Move>();
+        Figures figure;
+        for(int i=0;i<8;i++){
+            for(int j=0;j<8;j++){
+                figure = getFigure(i, j);
+                if (figure != Figures.EMPTY && ((side == side.WHITE && figure != Figures.BLACK_KING)
+                || (side == side.BLACK && figure != Figures.WHITE_KING))){
+                    allTakeMoves.addAll(takeMoves(i, j, side));
+                }
+            }
+        }
+        return allTakeMoves; 
+    }
+
     //ruchy bicia - obowiązkowe
-    public ArrayList<Move> TakeMoves(int row, int col, Player.Side side) {
+    public ArrayList<Move> takeMoves(int row, int col, Player.Side side) {
 
         ArrayList<Move> takeMoves = new ArrayList<Move>();
         Figures figure = getFigure(row, col);
@@ -253,37 +275,39 @@ public class Board {
                 enemyColLeft = col - 1;
                 enemyColRight = col + 1;
 
-                if (endRow >= 0 && enemyRow >= 0) {
-                    if (enemyColLeft >= 0 && (getFigure(enemyRow, enemyColLeft) == Figures.BLACK
+                if (endRow >= 0) {
+                    if (colLeft >= 0 && (getFigure(enemyRow, enemyColLeft) == Figures.BLACK
                             || getFigure(enemyRow, enemyColLeft) == Figures.BLACK_KING) && getFigure(endRow,colLeft)==Figures.EMPTY) {
                                 takeMoves.add(new Move(starBoardSquare, new BoardSquare(endRow, colLeft)));
                     }
-                    if (enemyColRight < 8  && (getFigure(enemyRow, enemyColRight) == Figures.BLACK
-                    || getFigure(enemyRow, enemyColRight) == Figures.BLACK_KING) && getFigure(endRow,colLeft)==Figures.EMPTY){
+                    if (colRight < 8  && (getFigure(enemyRow, enemyColRight) == Figures.BLACK
+                    || getFigure(enemyRow, enemyColRight) == Figures.BLACK_KING) && getFigure(endRow,colRight)==Figures.EMPTY){
                         takeMoves.add(new Move(starBoardSquare, new BoardSquare(endRow, colRight)));
                     }
                 }
             }
         } else {
-            endRow = row + 2;
-            colLeft = col - 2;
-            colRight = col + 2;
-
-            enemyRow = row + 1;
-            enemyColLeft = col - 1;
-            enemyColRight = col + 1;
-            if (endRow < 8 && enemyRow < 8) {
-                if (enemyColLeft >= 0 && (getFigure(enemyRow, enemyColLeft) == Figures.WHITE
-                        || getFigure(enemyRow, enemyColLeft) == Figures.WHITE_KING) && getFigure(endRow,colLeft)==Figures.EMPTY) {
-                            takeMoves.add(new Move(starBoardSquare, new BoardSquare(endRow, colLeft)));
-                }
-                if (enemyColRight < 8 && (getFigure(enemyRow, enemyColRight) == Figures.WHITE
-                || getFigure(enemyRow, enemyColRight) == Figures.WHITE_KING) && getFigure(endRow,colLeft)==Figures.EMPTY){
-                    takeMoves.add(new Move(starBoardSquare, new BoardSquare(endRow, colRight)));
+            if (figure == Figures.BLACK){
+                endRow = row + 2;
+                colLeft = col - 2;
+                colRight = col + 2;
+    
+                enemyRow = row + 1;
+                enemyColLeft = col - 1;
+                enemyColRight = col + 1;
+    
+                if (endRow < 8) {
+                    if (colLeft >= 0 && (getFigure(enemyRow, enemyColLeft) == Figures.WHITE
+                            || getFigure(enemyRow, enemyColLeft) == Figures.WHITE_KING) && getFigure(endRow,colLeft)==Figures.EMPTY) {
+                                takeMoves.add(new Move(starBoardSquare, new BoardSquare(endRow, colLeft)));
+                    }
+                    if (colRight < 8 && (getFigure(enemyRow, enemyColRight) == Figures.WHITE
+                    || getFigure(enemyRow, enemyColRight) == Figures.WHITE_KING) && getFigure(endRow,colRight)==Figures.EMPTY){
+                            takeMoves.add(new Move(starBoardSquare, new BoardSquare(endRow, colRight))); 
+                    }
                 }
             }
         }
-
         if(figure==Figures.WHITE_KING || figure==Figures.BLACK_KING){
 
             endRow = row - 2;
@@ -294,35 +318,31 @@ public class Board {
             enemyColLeft = col - 1;
             enemyColRight = col + 1;
 
-            if (endRow >= 0 && enemyRow >= 0) {
-                if (enemyColLeft >= 0 && (getFigure(enemyRow, enemyColLeft) == Figures.BLACK
-                        || getFigure(enemyRow, enemyColLeft) == Figures.BLACK_KING) && getFigure(endRow,colLeft)==Figures.EMPTY) {
+            if (endRow >= 0) {
+                if (colLeft >= 0 && !isMovingOwnFigure( getFigure(enemyRow, enemyColLeft),side) && getFigure(endRow,colLeft)==Figures.EMPTY) {
                             takeMoves.add(new Move(starBoardSquare, new BoardSquare(endRow, colLeft)));
                 }
-                if (enemyColRight < 8 && (getFigure(enemyRow, enemyColRight) == Figures.BLACK
-                || getFigure(enemyRow, enemyColRight) == Figures.BLACK_KING) && getFigure(endRow,colLeft)==Figures.EMPTY){
-                    takeMoves.add(new Move(starBoardSquare, new BoardSquare(endRow, colRight)));
+                if (colRight < 8 && !isMovingOwnFigure(getFigure(enemyRow, enemyColRight),side) && getFigure(endRow,colRight)==Figures.EMPTY){
+                        takeMoves.add(new Move(starBoardSquare, new BoardSquare(endRow, colRight)));
                 }
             }
-
             endRow = row + 2;
             enemyRow = row + 1;
 
-            if (endRow < 8 && enemyRow < 8) {
+            if (endRow < 8) {
 
-                if (enemyColLeft >= 0 && (getFigure(enemyRow, enemyColLeft) == Figures.WHITE
-                        || getFigure(enemyRow, enemyColLeft) == Figures.WHITE_KING) && getFigure(endRow,colLeft)==Figures.EMPTY) {
+                if (colLeft >= 0 && !isMovingOwnFigure( getFigure(enemyRow, enemyColLeft),side) && getFigure(endRow,colLeft)==Figures.EMPTY) {
                             takeMoves.add(new Move(starBoardSquare, new BoardSquare(endRow, colLeft)));
                 }
-                if (enemyColRight < 8 && (getFigure(enemyRow, enemyColRight) == Figures.WHITE
-                || getFigure(enemyRow, enemyColRight) == Figures.WHITE_KING) && getFigure(endRow,colLeft)==Figures.EMPTY){
+                if (colRight < 8 && !isMovingOwnFigure( getFigure(enemyRow, enemyColRight),side) && getFigure(endRow,colRight)==Figures.EMPTY){
                     takeMoves.add(new Move(starBoardSquare, new BoardSquare(endRow, colRight)));
                 }
             }
         }
-        // for(int i=0; i<takeMoves.size();i++)
-        //     System.out.println(takeMoves.get(i));
-        // return takeMoves;
+
+        for(int i=0; i<takeMoves.size();i++)
+            System.out.println(takeMoves.get(i));
+        return takeMoves;
     }
 
 }

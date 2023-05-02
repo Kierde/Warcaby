@@ -8,7 +8,7 @@ public class App {
         Board b = new Board();
         b.testBoard();
         System.out.println(b);
-        b.TakeMoves(5, 4, Player.Side.WHITE);
+        b.takeMoves(0, 4, Player.Side.BLACK);
 
         //b.normalProperMovesForFigure(1, 0, Player.Side.BLACK);
 
