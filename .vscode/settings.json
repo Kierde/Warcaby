@@ -1,7 +1,14 @@
 {
+     "java.debug.settings.stepping.skipClasses": [
+        "java.lang.ClassLoader",
+        "$JDK"
+    ]
     "java.project.sourcePaths": ["src"],
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
         "lib/**/*.jar"
+        
     ]
+    
 }
+

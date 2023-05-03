@@ -17,4 +17,8 @@ public class Player {
         return board.makeMove(move, side);
     }
 
+    public String toString() {
+        return "Tura gracza: " + playerName;
+    }
+
 }

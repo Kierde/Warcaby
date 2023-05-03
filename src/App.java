@@ -1,26 +1,65 @@
-import javafx.print.PrintQuality;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import javax.print.FlavorException;
+import javax.swing.text.StyledEditorKit.BoldAction;
 
 public class App {
     public static void main(String[] args) throws Exception {
 
         // Warcaby angielskie (warcaby amerykańskie, czekersy)
 
+        Player player1 = new Player(Player.Side.WHITE, "Biały");
+        Player player2 = new Player(Player.Side.BLACK, "Czarny");
         Board b = new Board();
         b.testBoard();
         System.out.println(b);
-        b.takeMoves(0, 4, Player.Side.BLACK);
+        boolean gameEnded = false;
+        boolean turnWhite = true;
+        Scanner moveScanner = new Scanner(System.in);
+        String wynikGry = null;
 
-        //b.normalProperMovesForFigure(1, 0, Player.Side.BLACK);
+        while (!gameEnded) {
 
-        // b.getAllNormalMoves(Player.Side.WHITE);
+            if (turnWhite) {
+                System.out.println(player1);
+                String move = moveScanner.nextLine();
+                BoardSquare start = new BoardSquare(Character.getNumericValue(move.charAt(0)),
+                        Character.getNumericValue(move.charAt(1)));
+                BoardSquare end = new BoardSquare(Character.getNumericValue(move.charAt(3)),
+                        Character.getNumericValue(move.charAt(4)));
+                wynikGry = player1.makeMove(new Move(start, end), b);
+                turnWhite = false;
+            } else {
+                System.out.println(player2);
+                String move = moveScanner.nextLine();
+                BoardSquare start = new BoardSquare(Character.getNumericValue(move.charAt(0)),
+                        Character.getNumericValue(move.charAt(1)));
+                BoardSquare end = new BoardSquare(Character.getNumericValue(move.charAt(3)),
+                        Character.getNumericValue(move.charAt(4)));
+                wynikGry = player2.makeMove(new Move(start, end), b);
+                turnWhite = true;
+            }
+            System.out.println(b);
 
-        // System.out.println(b.toString());
+            if (wynikGry.equals("Zly ruch") || wynikGry.equals("Figura nie jest twoja lub wybrałeś puste pole!")) {
+                System.out.println("Zły ruch - wprowadz poprawny");
+                if (turnWhite == false) {
+                    turnWhite = true;
+                } else {
+                    turnWhite = false;
+                }
+            }
+            if (wynikGry.equals("Białe wygrały")) {
+                System.out.println("Białe wygrały!");
+                gameEnded = true;
+            }
+            if (wynikGry.equals("Czarne wygrały")) {
+                System.out.println("Czarne wygrały!");
+                gameEnded = true;
 
-        // Player player = new Player(Player.Side.BLACK, "Player one");
-        // Move move = new Move(new BoardSquare(4, 3), new BoardSquare(4, 1));
-
-        // System.out.println(move);
-        // System.out.println(player.makeMove(move, b));
-
+            }
+        }
     }
 }

@@ -1,7 +1,7 @@
 public class BoardSquare {
 
-    int row;
-    int col;
+    public int row;
+    public int col;
 
     public BoardSquare(int row, int col) {
         this.row = row;
@@ -13,4 +13,21 @@ public class BoardSquare {
         String s = "row: " + row + " col: " + col;
         return s;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj == this)
+            return true;
+
+        if (!(obj instanceof BoardSquare))
+            return false;
+
+        BoardSquare br = (BoardSquare) obj;
+
+        if (Integer.compare(row, br.row) == 0 && Integer.compare(col, br.col) == 0)
+            return true;
+        return false;
+    }
+
 }
