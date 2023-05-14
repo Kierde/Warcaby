@@ -17,6 +17,10 @@ public class Board {
         beginStateOfBoard();
     }
 
+    public Board(Figures[][] board) {
+        this.board = board;
+    }
+
     public void beginStateOfBoard() {
 
         board = new Figures[8][8];
@@ -168,7 +172,6 @@ public class Board {
             if (sumOfFiguresWhite == 0 || possibleMoves.size() == 0) {
                 return "Czarne wygrały";
             }
-
             if (sumOfFiguresBlack == 0 || possibleMoves.size() == 0) {
                 return "Białe wygrały";
             }
@@ -201,6 +204,22 @@ public class Board {
         return oppSite;
     }
 
+    int getNumBlackKingPieces() {
+        return numBlackKings;
+    }
+
+    int getNumBlackNormalPieces() {
+        return numBlackPawns;
+    }
+
+    int getNumWhiteKingPieces() {
+        return numWhiteKings;
+    }
+
+    int getNumWhiteNormalPieces() {
+        return numWhitePawns;
+    }
+
     public void testBoard() {
 
         numWhitePawns = 1;
@@ -209,8 +228,8 @@ public class Board {
         numBlackKings = 0;
         board = new Figures[8][8];
 
-        board[3][3] = Figures.WHITE;
-        board[2][4] = Figures.BLACK;
+        board[3][3] = Figures.BLACK_KING;
+        board[2][4] = Figures.WHITE;
 
         fillEmptyOnBoard();
     }
@@ -228,8 +247,6 @@ public class Board {
                 }
             }
         }
-        // for (int i = 0; i < allNormalMoves.size(); i++)
-        // 5.println(allNormalMoves.get(i));
         return allNormalMoves;
     }
 
@@ -426,10 +443,18 @@ public class Board {
                 }
             }
         }
-
-        // for (int i = 0; i < takeMoves.size(); i++)
-        // System.out.println(takeMoves.get(i));
         return takeMoves;
+    }
+
+    public Board cloneBoard() {
+        Figures[][] newBoard = new Figures[8][8];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                newBoard[i][j] = board[i][j];
+            }
+        }
+        Board board = new Board(newBoard);
+        return board;
     }
 
 }
