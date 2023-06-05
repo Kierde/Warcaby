@@ -9,7 +9,7 @@ public class App {
         String regex = "^[0-7]{2} [0-7]{2}$";
         Player player1 = new Player(Player.Side.WHITE, "Biały");
         // Player player2 = new Player(Player.Side.BLACK, "Czarny");
-        MinMaxBot bot = new MinMaxBot(Player.Side.BLACK, 3);
+        MinMaxBot bot = new MinMaxBot(Player.Side.BLACK, 6);
         Board b = new Board();
         // b.testBoard();
         System.out.println(b);
@@ -26,15 +26,15 @@ public class App {
 
                 if (move.matches(regex)) {
                     BoardSquare start = new BoardSquare(Character.getNumericValue(move.charAt(0)),
-                        Character.getNumericValue(move.charAt(1)));
-                BoardSquare end = new BoardSquare(Character.getNumericValue(move.charAt(3)),
-                        Character.getNumericValue(move.charAt(4)));
-                wynikGry = player1.makeMove(new Move(start, end), b);
-                turnWhite = false;
-            } else {
-                System.out.println("Zły ruch!");
-                turnWhite = true;
-            }  
+                            Character.getNumericValue(move.charAt(1)));
+                    BoardSquare end = new BoardSquare(Character.getNumericValue(move.charAt(3)),
+                            Character.getNumericValue(move.charAt(4)));
+                    wynikGry = player1.makeMove(new Move(start, end), b);
+                    turnWhite = false;
+                } else {
+                    System.out.println("Zły ruch!");
+                    turnWhite = true;
+                }
             } else {
                 System.out.println("Tura czarnych");
                 wynikGry = bot.makeMove(b);
@@ -43,23 +43,23 @@ public class App {
             System.out.println(b);
 
             if (wynikGry != null) {
-                            if (wynikGry.equals("Zly ruch") || wynikGry.equals("Figura nie jest twoja lub wybrałeś puste pole!")) {
-                System.out.println("Zły ruch - wprowadz poprawny");
+                if (wynikGry.equals("Zly ruch") || wynikGry.equals("Figura nie jest twoja lub wybrałeś puste pole!")) {
+                    System.out.println("Zły ruch - wprowadz poprawny");
 
-                if (player1.side == Player.Side.BLACK) {
-                    turnWhite=false;
-                }else{
-                    turnWhite=true;
-                }        
-            }
-            if (wynikGry.equals("Białe wygrały")) {
-                System.out.println("Białe wygrały!");
-                gameEnded = true;
-            }
-            if (wynikGry.equals("Czarne wygrały")) {
-                System.out.println("Czarne wygrały!");
-                gameEnded = true;
-            }
+                    if (player1.side == Player.Side.BLACK) {
+                        turnWhite = false;
+                    } else {
+                        turnWhite = true;
+                    }
+                }
+                if (wynikGry.equals("Białe wygrały")) {
+                    System.out.println("Białe wygrały!");
+                    gameEnded = true;
+                }
+                if (wynikGry.equals("Czarne wygrały")) {
+                    System.out.println("Czarne wygrały!");
+                    gameEnded = true;
+                }
             }
         }
     }

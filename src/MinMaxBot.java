@@ -60,7 +60,7 @@ public class MinMaxBot {
         ArrayList<Move> validMoves = new ArrayList<Move>();
         validMoves.addAll(board.getAllTakeMoves(side));
 
-        if (validMoves.size() < 0) {
+        if (validMoves.size() == 0) {
             validMoves.addAll(board.getAllNormalMoves(side));
         }
 
@@ -73,7 +73,6 @@ public class MinMaxBot {
                 tempBoard.makeMove(validMoves.get(i), side);
                 double result = minimax(tempBoard, depth - 1, oppositeSide(side), !maximizingPlayer);
                 initial = Math.max(result, initial);
-
             }
         } else {
             initial = Double.POSITIVE_INFINITY;
